@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-  // Suche die .env-Datei im übergeordneten Verzeichnis
+  // Lade die .env-Datei aus dem übergeordneten Verzeichnis (Root)
   envDir: '../',
   plugins: [vue()],
   server: {

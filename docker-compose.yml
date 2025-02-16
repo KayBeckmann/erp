@@ -2,16 +2,21 @@ version: '3.8'
 
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: ${FRONTEND_BUILD_TARGET}
+      args:
+        NODE_ENV: ${NODE_ENV}
     ports:
-      - "${FRONTEND_PORT:-5173}:5173"
+      - "${FRONTEND_PORT:-5173}:${FRONTEND_PORT:-5173}"
     depends_on:
       - backend
     env_file:
       - .env
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     depends_on:
