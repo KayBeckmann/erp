@@ -82,4 +82,16 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+// DELETE /api/users/:id - Benutzer löschen
+router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const db = require('../db').getDB();
+    await db.execute('DELETE FROM users WHERE id = ?', [userId]);
+    res.json({ message: 'Benutzer gelöscht' });
+  } catch (err) {
+    res.status(500).json({ message: 'Serverfehler' });
+  }
+});
+
 module.exports = router;
