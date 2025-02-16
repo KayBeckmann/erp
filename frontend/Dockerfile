@@ -18,7 +18,7 @@ ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
 RUN npm run build
 
-# ---- Stage 4: Production Image mit Nginx ----
+# ---- Stage 4: Produktions-Image mit Nginx ----
 FROM nginx:alpine AS production
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
