@@ -17,6 +17,10 @@
           </li>
         </ul>
       </li>
+      <!-- Logout wird immer angezeigt -->
+      <li>
+        <button @click="logout">Logout</button>
+      </li>
     </ul>
   </nav>
 </template>
@@ -34,6 +38,12 @@ export default {
       } catch (e) {
         return false;
       }
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem('token');
+      this.$router.push('/login');
     }
   }
 }
@@ -63,5 +73,15 @@ nav li ul {
 
 nav li:hover ul {
   display: block;
+}
+
+button {
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font: inherit;
 }
 </style>
