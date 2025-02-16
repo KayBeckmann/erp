@@ -101,7 +101,7 @@ export default {
     },
     async fetchAvailableGroups() {
       try {
-        const response = await axios.get('http://localhost:3000/api/groups', {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/groups`, {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         })
         this.availableGroups = response.data

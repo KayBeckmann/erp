@@ -31,7 +31,7 @@ export default {
     },
     mode: {
       type: String,
-      default: 'new' // "new" oder "edit"
+      default: 'new'
     }
   },
   data() {

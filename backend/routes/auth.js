@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/User');
 const router = express.Router();
 
-const jwtSecret = 'your_jwt_secret'; // In Produktion in Umgebungsvariablen speichern
+const jwtSecret = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // Login-Route
 router.post('/login', async (req, res) => {
@@ -18,7 +18,6 @@ router.post('/login', async (req, res) => {
     if (!valid) {
       return res.status(401).json({ message: 'Ungültige Anmeldedaten' });
     }
-    // Token Payload enthält nun auch Gruppen und weitere Felder
     const tokenPayload = {
       id: user.id,
       username: user.username,
@@ -37,7 +36,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Middleware zur Verifizierung des JWT
+// Middleware zur Token-Verifizierung
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -50,7 +49,6 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// Registrierung über Auth-Route (optional)
 router.post('/register', authenticateToken, async (req, res) => {
   if (!req.user.groups.includes('Admin')) {
     return res.status(403).json({ message: 'Zugriff verweigert' });

@@ -1,8 +1,9 @@
 // backend/server.js
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { router: authRouter, authenticateToken } = require('./routes/auth');
+const { router: authRouter } = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const groupsRouter = require('./routes/groups');
 const { initializeDB } = require('./db');
@@ -20,7 +21,8 @@ app.use('/api/groups', groupsRouter);
 initializeDB()
   .then(async () => {
     await ensureAdminUser();
-    app.listen(3000, () => console.log('Backend-Server läuft auf Port 3000'));
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => console.log(`Backend-Server läuft auf Port ${port}`));
   })
   .catch(err => {
     console.error("Fehler beim Initialisieren der DB:", err);

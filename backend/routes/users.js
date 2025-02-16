@@ -4,7 +4,6 @@ const { User } = require('../models/User');
 const { authenticateToken } = require('./auth');
 const router = express.Router();
 
-// Middleware, die nur Admins durchlässt
 function requireAdmin(req, res, next) {
   if (req.user && req.user.groups && req.user.groups.includes('Admin')) {
     next();
@@ -13,7 +12,6 @@ function requireAdmin(req, res, next) {
   }
 }
 
-// GET /api/users - Liste aller Benutzer
 router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const db = require('../db').getDB();
@@ -35,7 +33,6 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// POST /api/users - Neuen Benutzer anlegen
 router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   const { username, password, groups, address, healthInsurance, taxNumber, taxClass, weeklyHours, wageSalary } = req.body;
   if (!username || !password || !groups) {
@@ -66,7 +63,6 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// PUT /api/users/:id - Benutzer aktualisieren
 router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
   const userId = req.params.id;
   const { groups, address, healthInsurance, taxNumber, taxClass, weeklyHours, wageSalary } = req.body;
@@ -82,7 +78,6 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// DELETE /api/users/:id - Benutzer löschen
 router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   const userId = req.params.id;
   try {

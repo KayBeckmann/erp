@@ -25,7 +25,6 @@
       </tbody>
     </table>
 
-    <!-- Modal für Anlage/Bearbeitung -->
     <GroupFormModal 
       v-if="showModal" 
       :group="selectedGroup" 
@@ -49,12 +48,12 @@ export default {
       groups: [],
       showModal: false,
       selectedGroup: null,
-      modalMode: 'new' // "new" oder "edit"
+      modalMode: 'new'
     }
   },
   methods: {
     fetchGroups() {
-      axios.get('http://localhost:3000/api/groups', {
+      axios.get(`${import.meta.env.VITE_API_URL}/api/groups`, {
         headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
       })
       .then(response => {
@@ -79,7 +78,7 @@ export default {
     },
     handleSave(payload) {
       if (this.modalMode === 'edit') {
-        axios.put(`http://localhost:3000/api/groups/${this.selectedGroup.id}`, payload, {
+        axios.put(`${import.meta.env.VITE_API_URL}/api/groups/${this.selectedGroup.id}`, payload, {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         })
         .then(() => {
@@ -90,7 +89,7 @@ export default {
           console.error('Fehler beim Aktualisieren der Gruppe:', error);
         });
       } else {
-        axios.post('http://localhost:3000/api/groups', payload, {
+        axios.post(`${import.meta.env.VITE_API_URL}/api/groups`, payload, {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         })
         .then(() => {
@@ -104,7 +103,7 @@ export default {
     },
     confirmDelete(group) {
       if (confirm(`Soll die Gruppe "${group.name}" wirklich gelöscht werden?`)) {
-        axios.delete(`http://localhost:3000/api/groups/${group.id}`, {
+        axios.delete(`${import.meta.env.VITE_API_URL}/api/groups/${group.id}`, {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         })
         .then(() => {

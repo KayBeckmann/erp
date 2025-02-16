@@ -37,7 +37,6 @@
       </tbody>
     </table>
 
-    <!-- Modal für Bearbeitung/Anlage -->
     <UserFormModal 
       v-if="showModal" 
       :user="selectedUser" 
@@ -61,12 +60,12 @@ export default {
       users: [],
       showModal: false,
       selectedUser: null,
-      modalMode: 'new' // 'new' oder 'edit'
+      modalMode: 'new'
     }
   },
   methods: {
     fetchUsers() {
-      axios.get('http://localhost:3000/api/users', {
+      axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
         headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
       })
       .then(response => {
@@ -91,8 +90,7 @@ export default {
     },
     handleSave(payload) {
       if (this.modalMode === 'edit') {
-        // Benutzer aktualisieren
-        axios.put(`http://localhost:3000/api/users/${this.selectedUser.id}`, payload, {
+        axios.put(`${import.meta.env.VITE_API_URL}/api/users/${this.selectedUser.id}`, payload, {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         })
         .then(() => {
@@ -103,8 +101,7 @@ export default {
           console.error('Fehler beim Aktualisieren des Benutzers:', error);
         });
       } else {
-        // Neuen Benutzer anlegen
-        axios.post('http://localhost:3000/api/users', payload, {
+        axios.post(`${import.meta.env.VITE_API_URL}/api/users`, payload, {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         })
         .then(() => {
@@ -118,7 +115,7 @@ export default {
     },
     confirmDelete(user) {
       if (confirm(`Soll der Benutzer "${user.username}" wirklich gelöscht werden?`)) {
-        axios.delete(`http://localhost:3000/api/users/${user.id}`, {
+        axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${user.id}`, {
           headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
         })
         .then(() => {

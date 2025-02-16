@@ -28,8 +28,7 @@ async function initializeDB() {
     throw new Error("Konnte keine Verbindung zur Datenbank herstellen.");
   }
 
-  // Erstelle Tabelle "users" mit zusätzlichen Feldern.
-  // Achtung: "groups" ist ein reserviertes Wort, daher wird es in Backticks gesetzt.
+  // Erstelle Tabelle "users" (Spalte "groups" in Backticks, da reserviert)
   await connection.execute(`
     CREATE TABLE IF NOT EXISTS users (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,8 +44,7 @@ async function initializeDB() {
     )
   `);
 
-  // Erstelle Tabelle "groups" zur Verwaltung der Gruppen.
-  // Auch hier wird der Tabellenname in Backticks gesetzt.
+  // Erstelle Tabelle "groups" (Tabellenname in Backticks)
   await connection.execute(`
     CREATE TABLE IF NOT EXISTS \`groups\` (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,7 +53,7 @@ async function initializeDB() {
     )
   `);
 
-  // Initialisiere Standardgruppen, falls nicht vorhanden.
+  // Initialisiere Standardgruppen, falls nicht vorhanden
   const [rows] = await connection.execute(`SELECT COUNT(*) as count FROM \`groups\``);
   if (rows[0].count === 0) {
     await connection.execute(`INSERT INTO \`groups\` (name, description) VALUES ('Admin', 'Administratoren'), ('Mitarbeiter', 'Standard Mitarbeiter')`);

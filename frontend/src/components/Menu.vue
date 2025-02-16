@@ -5,7 +5,6 @@
       <li>
         <router-link to="/home">Startseite</router-link>
       </li>
-      <!-- Admin Menü nur anzeigen, wenn der Benutzer in der Gruppe "Admin" ist -->
       <li v-if="isAdmin">
         <router-link to="/admin">Admin</router-link>
         <ul>
@@ -17,7 +16,6 @@
           </li>
         </ul>
       </li>
-      <!-- Logout wird immer angezeigt -->
       <li>
         <button @click="logout">Logout</button>
       </li>
@@ -54,13 +52,11 @@ nav ul {
   list-style-type: none;
   padding: 0;
 }
-
 nav li {
   display: inline-block;
   margin-right: 20px;
   position: relative;
 }
-
 nav li ul {
   display: none;
   position: absolute;
@@ -70,11 +66,9 @@ nav li ul {
   top: 100%;
   left: 0;
 }
-
 nav li:hover ul {
   display: block;
 }
-
 button {
   background: none;
   border: none;

@@ -4,7 +4,6 @@ const Group = require('../models/Group');
 const { authenticateToken } = require('./auth');
 const router = express.Router();
 
-// Middleware, die nur Admins durchlässt
 function requireAdmin(req, res, next) {
   if (req.user && req.user.groups && req.user.groups.includes('Admin')) {
     next();
@@ -13,7 +12,6 @@ function requireAdmin(req, res, next) {
   }
 }
 
-// GET /api/groups - Liste aller Gruppen
 router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const db = require('../db').getDB();
@@ -24,7 +22,6 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// POST /api/groups - Neue Gruppe erstellen
 router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   const { name, description } = req.body;
   if (!name) {
@@ -39,7 +36,6 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// PUT /api/groups/:id - Gruppe aktualisieren
 router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
   const groupId = req.params.id;
   const { name, description } = req.body;
@@ -52,7 +48,6 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// DELETE /api/groups/:id - Gruppe löschen
 router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   const groupId = req.params.id;
   try {

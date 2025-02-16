@@ -52,7 +52,6 @@ class User {
     return bcrypt.compare(password, this.password);
   }
 
-  // Prüft, ob der Benutzer in der angegebenen Gruppe ist
   isInGroup(groupName) {
     return this.groups.includes(groupName);
   }
