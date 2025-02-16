@@ -1,9 +1,10 @@
+// backend/routes/auth.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/User');
 const router = express.Router();
 
-const jwtSecret = 'your_jwt_secret'; // In der Produktion in einer Umgebungsvariable speichern
+const jwtSecret = 'your_jwt_secret'; // In Produktion in Umgebungsvariablen speichern
 
 // Login-Route
 router.post('/login', async (req, res) => {
@@ -17,18 +18,26 @@ router.post('/login', async (req, res) => {
     if (!valid) {
       return res.status(401).json({ message: 'Ungültige Anmeldedaten' });
     }
-    const token = jwt.sign(
-      { id: user.id, username: user.username, usergroup: user.usergroup },
-      jwtSecret,
-      { expiresIn: '1h' }
-    );
-    res.json({ token });
+    // Token Payload enthält nun auch Gruppen und weitere Felder
+    const tokenPayload = {
+      id: user.id,
+      username: user.username,
+      groups: user.groups,
+      address: user.address,
+      healthInsurance: user.healthInsurance,
+      taxNumber: user.taxNumber,
+      taxClass: user.taxClass,
+      weeklyHours: user.weeklyHours,
+      wageSalary: user.wageSalary
+    };
+    const token = jwt.sign(tokenPayload, jwtSecret, { expiresIn: '1h' });
+    res.json({ token, user: tokenPayload });
   } catch (err) {
     res.status(500).json({ message: 'Serverfehler' });
   }
 });
 
-// Middleware zum Verifizieren des JWT
+// Middleware zur Verifizierung des JWT
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -41,13 +50,13 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// Route zum Erstellen eines neuen Benutzers (nur Administrator)
+// Registrierung über Auth-Route (optional)
 router.post('/register', authenticateToken, async (req, res) => {
-  if (req.user.usergroup !== 'Administrator') {
+  if (!req.user.groups.includes('Admin')) {
     return res.status(403).json({ message: 'Zugriff verweigert' });
   }
-  const { username, password, usergroup } = req.body;
-  if (!username || !password || !usergroup) {
+  const { username, password, groups, address, healthInsurance, taxNumber, taxClass, weeklyHours, wageSalary } = req.body;
+  if (!username || !password || !groups) {
     return res.status(400).json({ message: 'Fehlende Felder' });
   }
   try {
@@ -55,14 +64,24 @@ router.post('/register', authenticateToken, async (req, res) => {
     if (existing) {
       return res.status(400).json({ message: 'Benutzer existiert bereits' });
     }
-    const newUser = await User.create(username, password, usergroup);
+    const newUser = await User.create(username, password, groups, address, healthInsurance, taxNumber, taxClass, weeklyHours, wageSalary);
     res.json({
       message: 'Benutzer erstellt',
-      user: { id: newUser.id, username: newUser.username, usergroup: newUser.usergroup }
+      user: {
+        id: newUser.id,
+        username: newUser.username,
+        groups: newUser.groups,
+        address: newUser.address,
+        healthInsurance: newUser.healthInsurance,
+        taxNumber: newUser.taxNumber,
+        taxClass: newUser.taxClass,
+        weeklyHours: newUser.weeklyHours,
+        wageSalary: newUser.wageSalary
+      }
     });
   } catch (err) {
     res.status(500).json({ message: 'Serverfehler' });
   }
 });
 
-module.exports = router;
+module.exports = { router, authenticateToken };

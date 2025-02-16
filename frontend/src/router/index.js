@@ -1,6 +1,10 @@
+// frontend/src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue'
-import Dashboard from '../components/Dashboard.vue'
+import Home from '../views/Home.vue'
+import Admin from '../views/Admin.vue'
+import Users from '../views/Users.vue'
+import Groups from '../views/Groups.vue'
 
 const routes = [
   {
@@ -9,10 +13,34 @@ const routes = [
     component: Login
   },
   {
-    path: '/',
-    name: 'Dashboard',
-    component: Dashboard,
+    path: '/home',
+    name: 'Home',
+    component: Home,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
+    meta: { requiresAuth: true, requiresAdmin: true },
+    children: [
+      {
+        path: 'users',
+        name: 'Users',
+        component: Users,
+        meta: { requiresAuth: true, requiresAdmin: true }
+      },
+      {
+        path: 'groups',
+        name: 'Groups',
+        component: Groups,
+        meta: { requiresAuth: true, requiresAdmin: true }
+      }
+    ]
+  },
+  {
+    path: '/',
+    redirect: '/home'
   }
 ]
 
@@ -26,9 +54,20 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
   if (to.meta.requiresAuth && !token) {
     next({ name: 'Login' });
+  } else if (to.meta.requiresAdmin) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.groups && payload.groups.includes('Admin')) {
+        next();
+      } else {
+        next({ name: 'Home' });
+      }
+    } catch (e) {
+      next({ name: 'Login' });
+    }
   } else {
     next();
   }
-})
+});
 
 export default router;

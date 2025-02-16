@@ -1,7 +1,10 @@
+// backend/server.js
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const authRoutes = require('./routes/auth');
+const { router: authRouter, authenticateToken } = require('./routes/auth');
+const usersRouter = require('./routes/users');
+const groupsRouter = require('./routes/groups');
 const { initializeDB } = require('./db');
 const { ensureAdminUser } = require('./models/User');
 
@@ -10,11 +13,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // API-Routen
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/groups', groupsRouter);
 
 initializeDB()
   .then(async () => {
-    // Sicherstellen, dass der Admin-Benutzer existiert
     await ensureAdminUser();
     app.listen(3000, () => console.log('Backend-Server läuft auf Port 3000'));
   })
